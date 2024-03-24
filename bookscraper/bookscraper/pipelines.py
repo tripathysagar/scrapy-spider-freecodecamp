@@ -5,6 +5,26 @@
 
 
 # useful for handling different item types with a single interface
+import pymongo
+import os
+
+MONGO_URL = os.getenv("MONGO_URL")
+print(f"************************\n {MONGO_URL}************************")
+class MongoDBPipeline:
+
+    def __init__(self):
+        self.client = pymongo.MongoClient(MONGO_URL)
+        self.db = self.client["mydatabase"]
+        self.col = self.db["books"]
+
+    def process_item(self, item, spider):
+        self.col.insert_one(item)
+        return item
+    
+    def close_spider(self, spider):
+        self.client.close()
+
+
 from itemadapter import ItemAdapter
 
 
